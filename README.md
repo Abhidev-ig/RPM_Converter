@@ -31,15 +31,18 @@ An advanced engineering unit converter and calculator wrapped in a futuristic, 3
 *   **Web Audio API**: Procedural engine sound synthesis that changes pitch with RPM.
 
 ## 🕹️ How to Use
+
+### 🚀 Quick Start
+**[Click here to Launch the Holographic Reactor](https://abhidev-ig.github.io/RPM_Converter/)**  
+No installation required. Works in Chrome, Firefox, and Edge.
+
+### 💻 Local Installation (For Developers)
+If you want to modify the code or run it offline:
 1.  **Clone the Repo**:
     ```bash
     git clone https://github.com/Abhidev-ig/RPM_Converter.git
     ```
 2.  **Open**: Launch `index.html` in any modern browser.
-3.  **Controls**:
-    *   **Slider/Input**: Adjust RPM.
-    *   **Mode Toggle**: Cycle through STD / DYNO / CNC / GEAR tools.
-    *   **Overdrive**: Click "SAFETY DISABLED" to unlock max speed.
 
 ## 📸 Screenshots
 *(Add screenshots of your reactor here)*
