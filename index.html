@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holographic Reactor | RPM Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-grid"></div>
+    <div class="scanline"></div>
+
+    <!-- BOOT SEQUENCE OVERLAY -->
+    <div id="boot-screen">
+        <div id="boot-terminal">
+            <div id="boot-log"></div>
+            <div class="cursor">_</div>
+        </div>
+    </div>
+
+    <!-- HUD CONTAINER -->
+    <!-- HEADER -->
+    <header class="hud-header">
+        <div class="status-bar">
+            <span class="system-status">SYSTEM: ONLINE</span>
+            <button id="audio-toggle" class="audio-btn">AUDIO: OFF</button>
+        </div>
+        <h1>CORE CONTROL</h1>
+    </header>
+
+    <main class="cockpit">
+        <!-- LEFT: THROTTLE -->
+        <section class="hud-panel left-panel">
+            <h2 class="panel-label">POWER_LEVEL</h2>
+            <div class="throttle-container">
+                <div class="throttle-track">
+                    <input type="range" id="rpm-slider" min="0" max="6000" step="10" value="0" orient="vertical">
+                </div>
+                <div class="throttle-markers">
+                    <span>MAX</span>
+                    <span>50%</span>
+                    <span>Isol</span>
+                </div>
+            </div>
+            <div class="overdrive-control">
+                <label class="switch-label">LIMITER</label>
+                <button id="overdrive-toggle" class="cyber-button">ENGAGE OVERDRIVE</button>
+
+                <label class="switch-label" style="margin-top: 1rem;">SIMULATION</label>
+                <button id="game-toggle" class="cyber-button">START SEQUENCE</button>
+            </div>
+        </section>
+
+        <!-- CENTER: REACTOR CORE -->
+        <section class="hud-panel center-panel">
+            <div class="reactor-housing">
+                <div id="particles"></div>
+                <div class="reactor-ring outer"></div>
+                <div class="reactor-ring inner"></div>
+                <div class="core-wrapper">
+                    <svg id="main-gear" class="gear-icon" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 2C12.5523 2 13 2.44772 13 3V4.1C13.6826 4.22359 14.3312 4.45613 14.9205 4.7831L15.6983 4.00527C16.0888 3.61475 16.722 3.61475 17.1125 4.00527L18.5267 5.41948C18.9172 5.81001 18.9172 6.44317 18.5267 6.8337L17.7489 7.61152C18.0758 8.20087 18.3084 8.8494 18.4319 9.53205H19.532C20.0843 9.53205 20.532 9.97977 20.532 10.5321V12.5321C20.532 13.0843 20.0843 13.5321 19.532 13.5321H18.4319C18.3084 14.2147 18.0758 14.8632 17.7489 15.4526L18.5267 16.2304C18.9172 16.6209 18.9172 17.2541 18.5267 17.6446L17.1125 19.0588C16.722 19.4494 16.0888 19.4494 15.6983 19.0588L14.9205 18.281C14.3312 18.608 13.6826 18.8405 13 18.9641V20.0641C13 20.6164 12.5523 21.0641 12 21.0641H10C9.44772 21.0641 9 20.6164 9 20.0641V18.9641C8.3174 18.8405 7.66877 18.608 7.07946 18.281L6.30164 19.0588C5.91111 19.4494 5.27795 19.4494 4.88742 19.0588L3.47321 17.6446C3.08269 17.2541 3.08269 16.6209 3.47321 16.2304L4.25103 15.4526C3.92406 14.8632 3.69152 14.2147 3.56795 13.5321H2.46795C1.91566 13.5321 1.46795 13.0843 1.46795 12.5321V10.5321C1.46795 9.97977 1.91566 9.53205 2.46795 9.53205H3.56795C3.69152 8.8494 3.92406 8.20087 4.25103 7.61152L3.47321 6.8337C3.08269 6.44317 3.08269 5.81001 3.47321 5.41948L4.88742 4.00527C5.27795 3.61475 5.91111 3.61475 6.30164 4.00527L7.07946 4.7831C7.66877 4.45613 8.3174 4.22359 9 4.1V3C9 2.44772 9.44772 2 10 2H12ZM11 13.332C12.2887 13.332 13.3333 12.2874 13.3333 10.9987C13.3333 9.71004 12.2887 8.66538 11 8.66538C9.71131 8.66538 8.66667 9.71004 8.66667 10.9987C8.66667 12.2874 9.71131 13.332 11 13.332Z"
+                            fill="currentColor" />
+                    </svg>
+                </div>
+                <div class="rpm-digital-display">
+                    <input type="number" id="rpm-input" placeholder="0" value="0">
+                    <span class="unit-label">RPM</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT: DIAGNOSTICS -->
+        <section class="hud-panel right-panel">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <h2 class="panel-label">DIAGNOSTICS</h2>
+                <button id="dyno-toggle" class="cyber-button-small">MODE: STD</button>
+            </div>
+
+            <!-- STANDARD VIEW -->
+            <div id="diagnostics-std">
+                <div class="data-row">
+                    <div class="data-label">FREQUENCY [Hz]</div>
+                    <div class="data-value" id="hz-output">0.00</div>
+                </div>
+
+                <div class="data-row">
+                    <div class="data-label">VELOCITY [rad/s]</div>
+                    <div class="data-value" id="rads-output">0.00</div>
+                </div>
+
+                <div class="data-row">
+                    <div class="data-label">ANGULAR [deg/s]</div>
+                    <div class="data-value" id="degs-output">0.00</div>
+                </div>
+            </div>
+
+            <!-- DYNO VIEW -->
+            <div id="diagnostics-dyno" style="display: none;">
+                <div class="data-row">
+                    <div class="data-label">TORQUE INPUT [N·m]</div>
+                    <input type="number" id="torque-input" class="cyber-input" value="300" step="10">
+                </div>
+
+                <div class="data-row">
+                    <div class="data-label">POWER OUTPUT [kW]</div>
+                    <div class="data-value" id="kw-output">0.00</div>
+                </div>
+
+                <div class="data-row">
+                    <div class="data-label">MECHANICAL [HP]</div>
+                    <div class="data-value" id="hp-output">0.00</div>
+                </div>
+            </div>
+
+            <!-- CNC VIEW -->
+            <div id="diagnostics-cnc" style="display: none;">
+                <div class="data-row">
+                    <div class="data-label">DIAMETER [mm]</div>
+                    <input type="number" id="diameter-input" class="cyber-input" value="100" step="1">
+                </div>
+
+                <div class="data-row">
+                    <div class="data-label">SURFACE SPEED [m/s]</div>
+                    <div class="data-value" id="velocity-output">0.00</div>
+                </div>
+            </div>
+
+            <!-- GEAR VIEW -->
+            <div id="diagnostics-gear" style="display: none;">
+                <div class="data-row">
+                    <div class="data-label">DRIVER TEETH [N1]</div>
+                    <input type="number" id="gear-n1" class="cyber-input" value="20" step="1">
+                </div>
+                <div class="data-row">
+                    <div class="data-label">DRIVEN TEETH [N2]</div>
+                    <input type="number" id="gear-n2" class="cyber-input" value="40" step="1">
+                </div>
+                <div class="data-row">
+                    <div class="data-label">RATIO : OUTPUT RPM</div>
+                    <div class="data-value" id="gear-output">0.00 : 0</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">OUTPUT TORQUE [N·m]</div>
+                    <div class="data-value" id="torque-output">0.00</div>
+                </div>
+            </div>
+
+            <div class="data-row" id="game-stats" style="display: none; border-color: var(--hud-magenta);">
+                <div class="data-label" style="color: var(--hud-magenta);">TARGET RPM</div>
+                <div class="data-value" id="target-rpm" style="color: var(--hud-magenta);">0</div>
+
+                <div class="data-label" style="margin-top: 0.5rem; color: #00ff00;">ENERGY GENERATED</div>
+                <div class="data-value" id="score-output" style="color: #00ff00;">0</div>
+            </div>
+
+            <div class="alert-box" id="critical-alert">
+                WARNING: CRITICAL RPM
+            </div>
+        </section>
+    </main>
+
+    <footer class="hud-footer">
+        <div class="decorative-line"></div>
+        <p>STARK ENGINEERING SYSTEMS // V.2.0.25</p>
+    </footer>
+    <!-- Flight Recorder -->
+    <section class="recorder-panel">
+        <div class="telemetry-graph">
+            <h3>LIVE MANIFOLD PRESSURE</h3>
+            <canvas id="rpm-graph" width="300" height="100"></canvas>
+        </div>
+        <div class="system-logs">
+            <h3>EVENT LOG</h3>
+            <div id="log-terminal" class="terminal-content">
+                <div class="log-entry">[SYSTEM] Initializing Recorder...</div>
+            </div>
+        </div>
+    </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,735 @@
+:root {
+    --bg-color: #050510;
+    --hud-cyan: #00f3ff;
+    --hud-cyan-dim: rgba(0, 243, 255, 0.2);
+    --hud-magenta: #ff00ff;
+    --hud-purple: #bd00ff;
+    /* Overdrive Color */
+    --text-primary: #ffffff;
+    --warning-red: #ff3333;
+
+    --font-tech: 'Orbitron', 'Share Tech Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-tech);
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    perspective: 1000px;
+}
+
+/* Background Grid Animation */
+.background-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-image:
+        linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+    animation: gridMove 20s linear infinite;
+    opacity: 0.3;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes gridMove {
+    0% {
+        transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px);
+    }
+
+    transform: perspective(500px) rotateX(60deg) translateY(50px) translateZ(-200px) translateX(calc(var(--mouseX, 0) * -20px)) translateY(calc(var(--mouseY, 0) * -20px));
+}
+}
+}
+
+/* Scanline Overlay */
+.scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* HUD Layout */
+.hud-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.hud-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--hud-cyan);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px var(--hud-cyan);
+}
+
+.hud-header h1 {
+    font-size: 2rem;
+    letter-spacing: 4px;
+}
+
+.status-bar {
+    font-size: 0.8rem;
+    color: var(--hud-cyan);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.audio-btn {
+    background: transparent;
+    border: 1px solid var(--hud-cyan-dim);
+    color: var(--hud-cyan-dim);
+    font-family: var(--font-tech);
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.audio-btn:hover {
+    border-color: var(--hud-cyan);
+    color: var(--hud-cyan);
+    box-shadow: 0 0 5px var(--hud-cyan);
+}
+
+.audio-btn.active {
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--hud-cyan);
+    color: var(--hud-cyan);
+    text-shadow: 0 0 5px var(--hud-cyan);
+}
+
+.cockpit {
+    flex: 1;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-panel {
+    border: 1px solid var(--hud-cyan-dim);
+    background: rgba(0, 20, 40, 0.4);
+    backdrop-filter: blur(4px);
+    padding: 1.5rem;
+    padding: 1.5rem;
+    position: relative;
+    /* Parallax Shift (Opposite to mouse) + Glitch */
+    transform: translate(calc((var(--mouseX, 0) * -10px) + var(--glitchX, 0px)),
+            calc((var(--mouseY, 0) * -10px) + var(--glitchY, 0px)));
+    transition: transform 0.1s ease-out;
+}
+
+/* HUD Corners */
+.hud-panel::before,
+.hud-panel::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--hud-cyan);
+    transition: all 0.3s;
+}
+
+.hud-panel::before {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.hud-panel::after {
+    bottom: -1px;
+    right: -1px;
+    border-left: none;
+    border-top: none;
+}
+
+.panel-label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: var(--bg-color);
+    padding: 0 5px;
+    font-size: 0.8rem;
+    color: var(--hud-cyan);
+    letter-spacing: 1px;
+}
+
+/* Left: Throttle */
+.left-panel {
+    width: 150px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.throttle-container {
+    height: 100%;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.throttle-track {
+    height: 100%;
+    width: 40px;
+    position: relative;
+}
+
+input[type=range][orient=vertical] {
+    writing-mode: bt-lr;
+    /* IE */
+    -webkit-appearance: slider-vertical;
+    /* WebKit */
+    width: 100%;
+    height: 100%;
+    outline: none;
+    background: transparent;
+}
+
+.throttle-markers {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--hud-cyan-dim);
+    font-size: 0.7rem;
+}
+
+.overdrive-control {
+    margin-top: 1.5rem;
+    text-align: center;
+    width: 100%;
+}
+
+.switch-label {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--warning-red);
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+
+.cyber-button {
+    background: transparent;
+    border: 1px solid var(--warning-red);
+    color: var(--warning-red);
+    font-family: var(--font-tech);
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-shadow: 0 0 5px var(--warning-red);
+    box-shadow: 0 0 5px rgba(255, 51, 51, 0.2);
+}
+
+.cyber-button:hover {
+    background: rgba(255, 51, 51, 0.2);
+    box-shadow: 0 0 15px var(--warning-red);
+}
+
+.cyber-button.active {
+    background: var(--warning-red);
+    color: #000;
+    box-shadow: 0 0 20px var(--warning-red);
+    font-weight: bold;
+    animation: pulse 1s infinite;
+}
+
+/* Center: Reactor */
+.center-panel {
+    flex: 1;
+    max-width: 500px;
+    aspect-ratio: 1;
+    border: none;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reactor-housing {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#particles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--hud-cyan);
+    border-radius: 50%;
+    filter: blur(1px);
+    opacity: 0;
+    animation: flyOut 1s linear forwards;
+}
+
+@keyframes flyOut {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(0);
+        opacity: 0;
+    }
+}
+
+.reactor-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed var(--hud-cyan);
+    animation: rotate 20s linear infinite;
+}
+
+.reactor-ring.outer {
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+}
+
+.reactor-ring.inner {
+    width: 70%;
+    height: 70%;
+    border-style: solid;
+    border-width: 1px;
+    animation-direction: reverse;
+    animation-duration: 15s;
+}
+
+.core-wrapper {
+    width: 180px;
+    height: 180px;
+    color: var(--hud-cyan);
+    filter: drop-shadow(0 0 20px var(--hud-cyan));
+    transition: color 0.5s, filter 0.5s, transform 0.1s ease-out;
+    z-index: 2;
+    /* Core rotates towards mouse */
+    transform: rotateX(calc(var(--mouseY, 0) * -15deg)) rotateY(calc(var(--mouseX, 0) * 15deg));
+}
+
+.gear-icon {
+    width: 100%;
+    height: 100%;
+    animation: spin 0s linear infinite;
+}
+
+.rpm-digital-display {
+    position: absolute;
+    bottom: -80px;
+    text-align: center;
+}
+
+#rpm-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--hud-cyan);
+    color: var(--text-primary);
+    font-family: var(--font-tech);
+    font-size: 3rem;
+    width: 200px;
+    text-align: center;
+    outline: none;
+}
+
+.unit-label {
+    display: block;
+    color: var(--hud-cyan);
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+/* Right: Diagnostics */
+.right-panel {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.data-row {
+    border-bottom: 1px solid var(--hud-cyan-dim);
+    padding-bottom: 0.5rem;
+}
+
+.data-label {
+    color: var(--hud-cyan-dim);
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+}
+
+.data-value {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    text-shadow: 0 0 5px var(--hud-cyan);
+}
+
+.alert-box {
+    margin-top: auto;
+    border: 2px solid var(--warning-red);
+    color: var(--warning-red);
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+    background: rgba(255, 51, 51, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-shadow: 0 0 8px var(--warning-red);
+    animation: blink 0.5s infinite;
+}
+
+.alert-box.visible {
+    opacity: 1;
+}
+
+.hud-footer {
+    text-align: center;
+    color: var(--hud-cyan-dim);
+    font-size: 0.7rem;
+    margin-top: 1rem;
+}
+
+/* Animations */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 10px var(--warning-red);
+    }
+
+    50% {
+        box-shadow: 0 0 30px var(--warning-red);
+    }
+
+    100% {
+        box-shadow: 0 0 10px var(--warning-red);
+    }
+}
+
+/* Critical Mass Shake */
+.shake-effect {
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both infinite;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* Overdrive Glitch */
+.glitch-effect {
+    animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
+    color: var(--hud-purple) !important;
+    text-shadow: 2px 2px var(--hud-magenta), -2px -2px var(--hud-cyan) !important;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+/* Color States */
+.critical .core-wrapper {
+    color: var(--warning-red);
+    filter: drop-shadow(0 0 40px var(--warning-red));
+}
+
+.critical #rpm-input {
+    color: var(--warning-red);
+    border-color: var(--warning-red);
+}
+
+.overdrive .core-wrapper {
+    color: var(--hud-purple);
+    filter: drop-shadow(0 0 60px var(--hud-purple));
+}
+
+.overdrive #rpm-input {
+    color: var(--hud-purple);
+    border-color: var(--hud-purple);
+}
+
+.overdrive .particle {
+    background: var(--hud-purple);
+    box-shadow: 0 0 10px var(--hud-purple);
+}
+
+/* Game Mode States */
+.stable .core-wrapper {
+    color: #00ff00;
+    filter: drop-shadow(0 0 40px #00ff00);
+}
+
+.stable #rpm-input {
+    color: #00ff00;
+    border-color: #00ff00;
+}
+
+.stable .particle {
+    background: #00ff00;
+}
+
+.unstable .core-wrapper {
+    color: #ff9900;
+    /* Warning Orange */
+}
+
+/* --- FLIGHT RECORDER --- */
+.recorder-panel {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-top: 1px solid var(--hud-cyan-dim);
+    background: rgba(0, 10, 20, 0.8);
+    height: 200px;
+}
+
+.telemetry-graph {
+    flex: 1;
+    border: 1px solid var(--hud-border);
+    position: relative;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.telemetry-graph h3,
+.system-logs h3 {
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--hud-cyan-dim);
+    margin-bottom: 5px;
+}
+
+#rpm-graph {
+    width: 100%;
+    height: 85%;
+    display: block;
+}
+
+.system-logs {
+    flex: 1;
+    border: 1px solid var(--hud-border);
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.terminal-content {
+    flex: 1;
+    overflow-y: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--hud-cyan);
+    padding: 5px;
+    display: flex;
+    flex-direction: column-reverse;
+    /* Newest at bottom visually, or handle auto-scroll */
+}
+
+/* Custom Scrollbar for Terminal */
+.terminal-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+    background: #000;
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+    background: var(--hud-cyan-dim);
+}
+
+.log-entry {
+    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+}
+
+.log-entry.warn {
+    color: #ff9900;
+}
+
+.log-entry.crit {
+    color: #ff0000;
+}
+
+
+/* --- DYNO MODE UPGRADE --- */
+.cyber-button-small {
+    background: transparent;
+    border: 1px solid var(--hud-cyan-dim);
+    color: var(--hud-cyan);
+    font-family: var(--font-tech);
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    align-self: flex-end;
+    /* If strictly flex */
+}
+
+.cyber-button-small:hover {
+    background: var(--hud-cyan-dim);
+    box-shadow: 0 0 5px var(--hud-cyan);
+}
+
+.cyber-input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--hud-cyan);
+    color: var(--text-primary);
+    font-family: var(--font-tech);
+    font-size: 1.2rem;
+    width: 100%;
+    text-align: right;
+    padding: 5px;
+    outline: none;
+}
+
+.cyber-input:focus {
+    box-shadow: 0 0 10px var(--hud-cyan);
+}
+
+/* --- BOOT SEQUENCE --- */
+#boot-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 2rem;
+    font-family: 'Share Tech Mono', monospace;
+    transition: opacity 1s ease-out;
+}
+
+#boot-terminal {
+    color: var(--hud-cyan);
+    font-size: 1rem;
+    line-height: 1.5;
+    text-shadow: 0 0 5px var(--hud-cyan);
+}
+
+.cursor {
+    display: inline-block;
+    animation: blink 0.5s infinite;
+}
