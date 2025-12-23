@@ -45,7 +45,7 @@ If you want to modify the code or run it offline:
 2.  **Open**: Launch `index.html` in any modern browser.
 
 ## 📸 Screenshots
-*(Add screenshots of your reactor here)*
+![Holographic Reactor Interface](assets/screenshot.png)
 
 ---
 *Created by [Abhidev-ig](https://github.com/Abhidev-ig) | Engineering Portfolio*
